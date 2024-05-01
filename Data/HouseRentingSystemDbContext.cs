@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class HouseRentingSystemDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public HouseRentingSystemDbContext(DbContextOptions<HouseRentingSystemDbContext> options)
             : base(options)
         {
         }

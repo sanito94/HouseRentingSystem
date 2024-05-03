@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using HouseRentingSystem.Infrastructure.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HouseRentingSystem.Data
@@ -9,5 +10,9 @@ namespace HouseRentingSystem.Data
             : base(options)
         {
         }
+
+        public DbSet<House> Houses { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Agent> Agents { get; set; }
     }
 }

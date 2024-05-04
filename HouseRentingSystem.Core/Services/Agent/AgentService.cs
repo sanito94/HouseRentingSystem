@@ -1,8 +1,9 @@
 ﻿using HouseRentingSystem.Core.Contracts.Agent;
-using HouseRentingSystem.Infrastructure.Data;
 using HouseRentingSystem.Infrastructure.Data.Common;
+using HouseRentingSystem.Infrastructure.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace HouseRentingSystem.Core.Services.Agent
+namespace HouseRentingSystem.Core.Services
 {
     public class AgentService : IAgentService
     {
@@ -13,9 +14,33 @@ namespace HouseRentingSystem.Core.Services.Agent
             repository = _repository;
         }
 
-        public Task<bool> ExistsById(string userId)
+        public async Task CreateAsync(string userId, string phoneNumber)
         {
-            throw new NotImplementedException();
+            await repository.AddAsync(new Agent()
+            {
+                UserId = userId,
+                PhoneNumber = phoneNumber
+            });
+
+            await repository.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsByIdAsync(string userId)
+        {
+            return await repository.AllReadOnly<Agent>()
+                .AnyAsync(a => a.UserId == userId);
+        }
+
+        public async Task<bool> UserHasRentsAsync(string userId)
+        {
+            return await repository.AllReadOnly<House>()
+                .AnyAsync(h => h.RenterId == userId);
+        }
+
+        public async Task<bool> UserWithPhoneNumberExistsAsync(string phoneNumber)
+        {
+            return await repository.AllReadOnly<Agent>()
+                .AnyAsync(a => a.PhoneNumber == phoneNumber);
         }
     }
 }

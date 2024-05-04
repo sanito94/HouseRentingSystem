@@ -16,7 +16,6 @@ namespace HouseRentingSystem.Controllers
             });
         }
 
-        [Authorize]
 		public async Task<IActionResult> Mine()
 		{
 			return View(new AllHousesQueryModel()
@@ -33,7 +32,6 @@ namespace HouseRentingSystem.Controllers
 			});
 		}
 
-		[Authorize]
 		public async Task<IActionResult> Add()
 		{
 			return View(new HouseFormModel()
@@ -48,7 +46,6 @@ namespace HouseRentingSystem.Controllers
 			return RedirectToAction(nameof(Details), new { id = "1" });
 		}
 
-		[Authorize]
 		public async Task<IActionResult> Edit(int id)
 		{
 			return View(new HouseFormModel()
@@ -63,7 +60,6 @@ namespace HouseRentingSystem.Controllers
 			return RedirectToAction(nameof(Details), new { id = "1" });
 		}
 
-		[Authorize]
 		public async Task<IActionResult> Delete(int id)
 		{
 			return View(new HouseDetailsViewModel()

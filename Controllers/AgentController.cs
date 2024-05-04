@@ -4,10 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HouseRentingSystem.Controllers
 {
-	
+	[Authorize]
 	public class AgentController : Controller
 	{
-		[Authorize]
+		public async Task<IActionResult> Become()
+		{
+			return View(new BecomeAgentFormModel
+			{
+
+			});
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> Become(BecomeAgentFormModel agent)
 		{

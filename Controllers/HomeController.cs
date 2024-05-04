@@ -11,7 +11,9 @@ namespace HouseRentingSystem.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IHouseService houseService;
 
-        public HomeController(ILogger<HomeController> logger, IHouseService _houseService)
+        public HomeController(
+            ILogger<HomeController> logger,
+            IHouseService _houseService)
         {
             _logger = logger;
             houseService = _houseService;

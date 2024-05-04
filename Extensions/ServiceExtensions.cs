@@ -32,6 +32,7 @@ namespace HouseRentingSystem.Extensions
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
                 options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
             })
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<HouseRentingSystemDbContext>();

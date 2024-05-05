@@ -1,4 +1,7 @@
-﻿using HouseRentingSystem.Core.Models.House;
+﻿using HouseRentingSystem.Core.Contracts.Agent;
+using HouseRentingSystem.Core.Contracts.House;
+using HouseRentingSystem.Core.Models.House;
+using HouseRentingSystem.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,14 +9,26 @@ namespace HouseRentingSystem.Controllers
 {
     public class HouseController : BaseController
     {
-		[AllowAnonymous]
-        public async Task<IActionResult> All()
-        {
-            return View(new AllHousesQueryModel()
-            {
+		private readonly IHouseService houseService;
+		private readonly IAgentService agentService;
 
-            });
+		public HouseController(
+			IHouseService _houseService,
+			IAgentService _agentService)
+		{
+			houseService = _houseService;
+			agentService = _agentService;
+		}
+
+
+		[AllowAnonymous]
+        public async Task<IActionResult> All([FromQuery] AllHousesQueryModel query)
+        {
+
+            return View(query);
         }
+
+
 
 		public async Task<IActionResult> Mine()
 		{
@@ -33,16 +48,38 @@ namespace HouseRentingSystem.Controllers
 
 		public async Task<IActionResult> Add()
 		{
-			return View(new HouseFormModel()
-			{
+            if (await agentService.ExistsByIdAsync(User.Id()) == false)
+            {
+				return RedirectToAction(nameof(AgentController.Become), "Agent");
+            }
 
-			});
+            var model = new HouseFormModel();
+
+            model.Categories = await houseService.AllCategoriesAsync();
+
+            return View(model);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Add(HouseFormModel house)
+		public async Task<IActionResult> Add(HouseFormModel model)
 		{
-			return RedirectToAction(nameof(Details), new { id = "1" });
+			if (await houseService.CategoryExistsAsync(model.CategoryId) == false)
+			{
+				this.ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist.");
+			}
+
+			if (!ModelState.IsValid)
+			{
+				model.Categories = await houseService.AllCategoriesAsync();
+
+				return View(model);
+			}
+
+			var agentId = await agentService.GetAgentId(User.Id());
+
+			var newHouseId = await houseService.Create(model, agentId ?? 0);
+
+			return RedirectToAction(nameof(Details), new { id = newHouseId });
 		}
 
 		public async Task<IActionResult> Edit(int id)

@@ -63,10 +63,14 @@ namespace HouseRentingSystem.Controllers
 
 		public async Task<IActionResult> Details(int id)
 		{
-			return View(new HouseDetailsViewModel()
+			if (await houseService.HouseExistsAsync(id) == false)
 			{
+				return BadRequest();
+			}
 
-			});
+			var houseModel = await houseService.HouseDetailsByIdAsync(id);
+
+			return View(houseModel);
 		}
 
 		public async Task<IActionResult> Add()

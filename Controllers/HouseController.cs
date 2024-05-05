@@ -111,16 +111,49 @@ namespace HouseRentingSystem.Controllers
 
 		public async Task<IActionResult> Edit(int id)
 		{
-			return View(new HouseFormModel()
+			if (await houseService.HouseExistsAsync(id) == false)
 			{
+				return BadRequest();
+			}
 
-			});
+			if (await houseService.HasAgentWithIdAsync(id, User.Id()) == false)
+			{
+				return Unauthorized();
+			}
+
+			var model = await houseService.GetHouseFormModelByIdAsync(id);
+
+			return View(model);
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Edit(int id, HouseFormModel house)
+		public async Task<IActionResult> Edit(int id, HouseFormModel model)
 		{
-			return RedirectToAction(nameof(Details), new { id = "1" });
+            if (await houseService.HouseExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await houseService.HasAgentWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            if (await houseService.CategoryExistsAsync(model.CategoryId) == false)
+            {
+                this.ModelState.AddModelError(nameof(model.CategoryId), "Category does not exist.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Categories = await houseService.AllCategoriesAsync();
+
+                return View(model);
+            }
+
+			await houseService.EditAsync(model, id);
+
+            return RedirectToAction(nameof(Details), new { id = id });
 		}
 
 		public async Task<IActionResult> Delete(int id)

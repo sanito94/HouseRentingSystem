@@ -4,6 +4,7 @@ using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Common;
 using HouseRentingSystem.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HouseRentingSystem.Core.Services
 {
@@ -93,14 +94,36 @@ namespace HouseRentingSystem.Core.Services
 				.ToListAsync();
         }
 
-        public Task<IEnumerable<HouseServiceModel>> AllHousesByAgentIdAsync(int agentId)
+        public async Task<IEnumerable<HouseServiceModel>> AllHousesByAgentIdAsync(int agentId)
         {
-            throw new NotImplementedException();
+            return await repository.AllReadOnly<House>()
+				.Where(h => h.AgentId == agentId)
+                .Select(h => new HouseServiceModel
+                {
+                    Id = h.Id,
+                    Title = h.Title,
+                    Address = h.Address,
+                    ImageUrl = h.ImageUrl,
+                    IsRented = h.RenterId != null,
+                    PricePerMonth = h.PricePerMonth,
+                })
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<HouseServiceModel>> AllHousesByRentnerIdAsync(string rentnerId)
+        public async Task<IEnumerable<HouseServiceModel>> AllHousesByRentnerIdAsync(string rentnerId)
         {
-            throw new NotImplementedException();
+            return await repository.AllReadOnly<House>()
+                .Where(h => h.RenterId == rentnerId)
+                .Select(h => new HouseServiceModel
+                {
+                    Id = h.Id,
+                    Title = h.Title,
+                    Address = h.Address,
+                    ImageUrl = h.ImageUrl,
+					IsRented = h.RenterId != null,
+                    PricePerMonth = h.PricePerMonth,
+                })
+                .ToListAsync();
         }
 
         public async Task<bool> CategoryExistsAsync(int categoryId)

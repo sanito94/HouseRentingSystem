@@ -1,5 +1,6 @@
 ﻿using HouseRentingSystem.Core.Contracts.House;
 using HouseRentingSystem.Core.Enumerations;
+using HouseRentingSystem.Core.Exceptions;
 using HouseRentingSystem.Core.Models.Agent;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Infrastructure.Data.Common;
@@ -233,6 +234,32 @@ namespace HouseRentingSystem.Core.Services
 				.AnyAsync(h => h.Id == id);
         }
 
+        public async Task<bool> IsRentedAsync(int houseId)
+        {
+            bool result = false;
+            var house = await repository.GetByIdAsync<House>(houseId);
+
+            if (house != null)
+            {
+                result = house.RenterId != null;
+            }
+
+            return result;
+        }
+
+        public async Task<bool> IsRentedByIUserWithIdAsync(int houseId, string userId)
+        {
+            bool result = false;
+            var house = await repository.GetByIdAsync<House>(houseId);
+
+            if (house != null)
+            {
+                result = house.RenterId == userId;
+            }
+
+            return result;
+        }
+
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
 		{
 			return await repository
@@ -247,5 +274,32 @@ namespace HouseRentingSystem.Core.Services
 				.Take(3)
 				.ToListAsync();
 		}
-	}
+
+        public async Task LeaveAsync(int houseId, string userId)
+        {
+            var house = await repository.GetByIdAsync<House>(houseId);
+
+			if (house != null)
+			{
+				if (house.RenterId != userId)
+				{
+					throw new UnauthorizedActionException("The user is not the renter");
+                }
+
+				house.RenterId = null;
+				await repository.SaveChangesAsync();
+			}
+        }
+
+        public async Task RentAsync(int houseId, string userId)
+        {
+            var house = await repository.GetByIdAsync<House>(houseId);
+
+            if (house != null)
+            {
+                house.RenterId = userId;
+                await repository.SaveChangesAsync();
+            }
+        }
+    }
 }

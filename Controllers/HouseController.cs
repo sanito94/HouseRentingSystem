@@ -1,9 +1,12 @@
 ﻿using HouseRentingSystem.Core.Contracts.Agent;
 using HouseRentingSystem.Core.Contracts.House;
+using HouseRentingSystem.Core.Exceptions;
 using HouseRentingSystem.Core.Models.House;
 using HouseRentingSystem.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using static HouseRentingSystem.Core.Constants.MessageConstants;
 
 namespace HouseRentingSystem.Controllers
 {
@@ -11,13 +14,16 @@ namespace HouseRentingSystem.Controllers
     {
 		private readonly IHouseService houseService;
 		private readonly IAgentService agentService;
+        private readonly ILogger logger;
 
-		public HouseController(
+        public HouseController(
 			IHouseService _houseService,
-			IAgentService _agentService)
+			IAgentService _agentService,
+            ILogger<HouseController> _logger)
 		{
 			houseService = _houseService;
 			agentService = _agentService;
+			logger = _logger;
 		}
 
 
@@ -202,13 +208,48 @@ namespace HouseRentingSystem.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Rent(int id)
 		{
-			return RedirectToAction(nameof(Mine));
+            if (await houseService.HouseExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await agentService.ExistsByIdAsync(User.Id()))
+            {
+                return Unauthorized();
+            }
+
+            if (await houseService.IsRentedAsync(id))
+            {
+                return BadRequest();
+            }
+
+            await houseService.RentAsync(id, User.Id());
+
+            return RedirectToAction(nameof(All));
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> Leave(int id)
 		{
-			return RedirectToAction(nameof(Mine));
+            if (await houseService.HouseExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await houseService.LeaveAsync(id, User.Id());
+
+                TempData[UserMessageSuccess] = "You have left the house!";
+            }
+            catch (UnauthorizedActionException uae)
+            {
+                logger.LogError(uae, "HouseController/Leave");
+
+                return Unauthorized();
+            }
+
+            return RedirectToAction(nameof(All));
 		}
 	}
 }

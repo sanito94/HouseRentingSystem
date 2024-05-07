@@ -40,6 +40,17 @@ namespace HouseRentingSystem
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "Player Details",
+                    pattern: "/House/Details/{id}/{information}",
+                    defaults: new { Controller = "TransferMarketPlayer", Action = "Details" }
+                    );
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();
+            });
+
             app.MapDefaultControllerRoute();
             app.MapRazorPages();
 

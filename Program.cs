@@ -23,6 +23,7 @@ namespace HouseRentingSystem
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
+                app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
             }
             else
             {

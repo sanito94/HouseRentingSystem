@@ -78,7 +78,8 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task<IEnumerable<HouseCategoryServiceModel>> AllCategoriesAsync()
         {
-            return await repository.AllReadOnly<Category>()
+            return await repository
+				.AllReadOnly<Category>()
 				.Select(c => new HouseCategoryServiceModel
 				{
 					Id = c.Id,

@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace HouseRentingSystem.Infrastructure.Data.Models.Seed
 {
-    internal class UserConfiguration : IEntityTypeConfiguration<IdentityUser>
+    internal class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
-        public void Configure(EntityTypeBuilder<IdentityUser> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             var data = new SeedData();
 
-            builder.HasData(new IdentityUser[]
+            builder.HasData(new ApplicationUser[]
             {
                 data.AgentUser, data.GuestUser
             });

@@ -1,11 +1,10 @@
-﻿using HouseRentingSystem.Core.Contracts.House;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using static HouseRentingSystem.Core.Constants.MessageConstants;
 using static HouseRentingSystem.Infrastructure.Constants.DataConstants;
 
 namespace HouseRentingSystem.Core.Models.House
 {
-    public class HouseServiceModel : IHouseModel
+    public class HouseServiceModel
     {
         public int Id { get; set; }
 

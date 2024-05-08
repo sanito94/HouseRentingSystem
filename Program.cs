@@ -15,7 +15,9 @@ namespace HouseRentingSystem
             builder.Services.AddAppIdentity(builder.Configuration);
             
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddAppService();
+            builder.Services.AddMemoryCache();
 
             var app = builder.Build();
 
@@ -23,6 +25,7 @@ namespace HouseRentingSystem
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
+                app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
             }
             else
             {
@@ -44,7 +47,7 @@ namespace HouseRentingSystem
                 endpoints.MapControllerRoute(
                     name: "Player Details",
                     pattern: "/House/Details/{id}/{information}",
-                    defaults: new { Controller = "TransferMarketPlayer", Action = "Details" }
+                    defaults: new { Controller = "House", Action = "Details" }
                     );
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();

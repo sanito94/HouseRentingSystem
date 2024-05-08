@@ -67,7 +67,7 @@ namespace HouseRentingSystem.Controllers
 			return View(model);
 		}
 
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int id, string information)
 		{
 			if (await houseService.HouseExistsAsync(id) == false)
 			{

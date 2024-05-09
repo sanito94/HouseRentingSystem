@@ -1,4 +1,6 @@
 ﻿@model HouseDetailsServiceModel
+@inject IHouseService houses
+@inject IAgentService agents
 
 @{
     ViewBag.Title = "House Details";
@@ -24,13 +26,17 @@
             <p>Category: <b>@Model.Category</b></p>
             <p><i>(@(Model.IsRented ? "Rented" : "Not Rented"))</i></p>
             <div class="form-inline">
-                @if (this.User.Identity.IsAuthenticated)
+                @if (this.User?.Identity?.IsAuthenticated ?? false)
                 {
-                        <a class="btn btn-warning" asp-controller="House" asp-action="Edit"
+                    if (await houses.HasAgentWithIdAsync(Model.Id, User.Id()))
+                    {
+                                <a class="btn btn-warning" asp-controller="House" asp-action="Edit"
                        asp-route-id="@Model.Id">Edit</a>
-                        <a class="ml-2 btn btn-danger" asp-controller="House" asp-action="Delete"
+                                <a class="ml-2 btn btn-danger" asp-controller="House" asp-action="Delete"
                        asp-route-id="@Model.Id">Delete</a>
-                    @if (!Model.IsRented)
+                    }
+                        
+                    @if (!Model.IsRented && await agents.ExistsByIdAsync(User.Id()) == false)
                     {
                                 <form class="ml-2" asp-controller="House"
                               asp-action="Rent" asp-route-id="@Model.Id" method="post">

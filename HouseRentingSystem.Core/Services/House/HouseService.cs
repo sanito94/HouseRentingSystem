@@ -268,6 +268,7 @@ namespace HouseRentingSystem.Core.Services
 				{
 					Id = h.Id,
 					Title = h.Title,
+					Address = h.Address,
 					ImageUrl = h.ImageUrl,
 				})
 				.Take(3)

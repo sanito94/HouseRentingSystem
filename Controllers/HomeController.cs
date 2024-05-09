@@ -21,7 +21,7 @@ namespace HouseRentingSystem.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string information)
         {
             var houses = await houseService.LastThreeHouses();
 

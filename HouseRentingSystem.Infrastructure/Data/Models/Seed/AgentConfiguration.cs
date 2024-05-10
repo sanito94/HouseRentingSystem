@@ -16,7 +16,7 @@ namespace HouseRentingSystem.Infrastructure.Data.Models.Seed
 
             builder.HasData(new Agent[]
             {
-                data.Agent
+                data.Agent, data.AdminAgent
             });
         }
     }

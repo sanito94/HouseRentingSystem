@@ -26,7 +26,8 @@ namespace HouseRentingSystem.Core.Services
 			int currentPage = 1, 
 			int housesPerPage = 1)
         {
-			var houseQuery = repository.AllReadOnly<House>();
+			var houseQuery = repository.AllReadOnly<House>()
+				.Where(h=> h.IsApproved);
 
 			if (!string.IsNullOrWhiteSpace(category))
 			{
@@ -98,6 +99,7 @@ namespace HouseRentingSystem.Core.Services
         public async Task<IEnumerable<HouseServiceModel>> AllHousesByAgentIdAsync(int agentId)
         {
             return await repository.AllReadOnly<House>()
+                .Where(h => h.IsApproved)
 				.Where(h => h.AgentId == agentId)
                 .Select(h => new HouseServiceModel
                 {
@@ -114,6 +116,7 @@ namespace HouseRentingSystem.Core.Services
         public async Task<IEnumerable<HouseServiceModel>> AllHousesByRentnerIdAsync(string rentnerId)
         {
             return await repository.AllReadOnly<House>()
+                .Where(h => h.IsApproved)
                 .Where(h => h.RenterId == rentnerId)
                 .Select(h => new HouseServiceModel
                 {
@@ -178,6 +181,7 @@ namespace HouseRentingSystem.Core.Services
         public async Task<HouseFormModel?> GetHouseFormModelByIdAsync(int id)
         {
 			var house = await repository.AllReadOnly<House>()
+                .Where(h => h.IsApproved)
 				.Where(h => h.Id == id)
 				.Select(h => new HouseFormModel
 				{
@@ -207,6 +211,7 @@ namespace HouseRentingSystem.Core.Services
         public async Task<HouseDetailsServiceModel> HouseDetailsByIdAsync(int id)
         {
 			return await repository.AllReadOnly<House>()
+                .Where(h => h.IsApproved)
 				.Where(h => h.Id == id)
 				.Select(h => new HouseDetailsServiceModel
 				{
@@ -220,6 +225,7 @@ namespace HouseRentingSystem.Core.Services
 					Category = h.Category.Name,
 					Agent = new AgentServiceModel()
 					{
+						FullName = $"{h.Agent.User.FirstName} {h.Agent.User.LastName}",
 						PhoneNumber = h.Agent.PhoneNumber,
 						Email = h.Agent.User.Email
 					}
@@ -261,8 +267,8 @@ namespace HouseRentingSystem.Core.Services
 
         public async Task<IEnumerable<HouseIndexServiceModel>> LastThreeHouses()
 		{
-			return await repository
-				.AllReadOnly<House>()
+			return await repository.AllReadOnly<House>()
+                .Where(h => h.IsApproved)
 				.OrderByDescending(h => h.Id)
 				.Select(h => new HouseIndexServiceModel
 				{

@@ -17,7 +17,7 @@ namespace HouseRentingSystem.Infrastructure.Data.Models.Seed
 
             builder.HasData(new ApplicationUser[]
             {
-                data.AgentUser, data.GuestUser
+                data.AgentUser, data.GuestUser, data.AdminUser
             });
         }
     }

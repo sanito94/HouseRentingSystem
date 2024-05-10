@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using static HouseRentingSystem.Infrastructure.Constants.DataConstants;
+using static HouseRentingSystem.Core.Constants.CustomClaims;
 
 namespace HouseRentingSystem.Areas.Identity.Pages.Account
 {
@@ -122,6 +123,8 @@ namespace HouseRentingSystem.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Member");
+
+                    await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim(UserFullNameClaim, $"{user.FirstName} {user.LastName}"));
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);

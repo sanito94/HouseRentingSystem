@@ -1,4 +1,5 @@
-﻿using HouseRentingSystem.Core.Contracts.Agent;
+﻿using HouseRentingSystem.Core.Contracts;
+using HouseRentingSystem.Core.Contracts.Agent;
 using HouseRentingSystem.Core.Contracts.House;
 using HouseRentingSystem.Core.Services;
 using HouseRentingSystem.Infrastructure.Data;
@@ -15,6 +16,8 @@ namespace HouseRentingSystem.Extensions
         {
             services.AddScoped<IHouseService, HouseService>();
             services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IRentService, RentService>();
+            services.AddScoped<IUserService, UserService>();
 
             return services;
         }

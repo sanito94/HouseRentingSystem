@@ -55,49 +55,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapRazorPages();
 });
 
-app.MapDefaultControllerRoute();
-app.MapRazorPages();
-
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager =
-        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
-    var roles = new[] { "Admin", "Member" };
-
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-        {
-            await roleManager.CreateAsync(new IdentityRole(role));
-        }
-    }
-}
-
-using (var scope = app.Services.CreateScope())
-{
-    var userManager =
-        scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-    string email = "admin@admin.com";
-
-    var hasher = new PasswordHasher<ApplicationUser>();
-
-    if (await userManager.FindByEmailAsync(email) == null)
-    {
-        var user = new ApplicationUser()
-        {
-            UserName = email,
-            Email = email,
-        };
-
-        user.PasswordHash =
-            hasher.HashPassword(user, "admin");
-
-        await userManager.CreateAsync(user);
-
-        await userManager.AddToRoleAsync(user, "Admin");
-    }
-}
+await app.CreateAdminRoleAsync();
 
 app.Run();

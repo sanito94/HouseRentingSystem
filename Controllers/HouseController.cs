@@ -113,11 +113,11 @@ namespace HouseRentingSystem.Controllers
 				return View(model);
 			}
 
-			var agentId = await agentService.GetAgentId(User.Id());
+            int? agentId = await agentService.GetAgentId(User.Id());
 
-			var newHouseId = await houseService.Create(model, agentId ?? 0);
+            int newHouseId = await houseService.Create(model, agentId ?? 0);
 
-			return RedirectToAction(nameof(Details), new { id = newHouseId, information = model.GetInformation() });
+            return RedirectToAction(nameof(All));
 		}
 
 		public async Task<IActionResult> Edit(int id)
